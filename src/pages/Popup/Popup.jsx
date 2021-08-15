@@ -153,7 +153,7 @@ class Popup extends React.Component {
                 fontSize: 12,
                 marginBottom: 0
               }}>
-                Estimated time: <span style={{ color: BLUE, fontWeight: "600" }}> {this.getEstimatedTime(this.getInteger(this.state.nbMsg) / 100)} </span>
+                Estimated time: <span style={{ color: BLUE, fontWeight: "600" }}> {this.getEstimatedTime(this.getInteger(this.state.nbMsg) / 415)} </span>
               </p>
             }
             <FormGroup row>

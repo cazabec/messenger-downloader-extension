@@ -1,8 +1,10 @@
 {
   "manifest_version": 3,
-  "version": "1.0.0",
+  "version": "1.0.2",
   "name": "messenger downloader",
   "options_page": "options.html",
+  "description": "Download your messenger conversations in 1 click",
+  "author": "Colin Cazabet",
   "action": {
     "default_popup": "popup.html",
     "default_icon": "icon-34.png"

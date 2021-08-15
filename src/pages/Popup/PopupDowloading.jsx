@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import moment from 'moment';
 import { Button } from '@material-ui/core';
 import { createTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import LoadingButton from './LoadingButton';
 
 const BLUE = "#1182ff"
 const WIDTH = 250;
@@ -16,7 +17,7 @@ const theme = createTheme({
       main: BLUE,
     },
     secondary: {
-      main: BLUE,
+      main: "#FFFFFF",
     },
   },
 });
@@ -31,6 +32,8 @@ class PopupDownloading extends React.Component {
       nbMsgLeft: 10000,
       lastDate: "yesterday",
       count: 1,
+      loading: false,
+      done: false
     }
   }
 
@@ -38,6 +41,8 @@ class PopupDownloading extends React.Component {
     this.setState({ time: Date.now() });
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       chrome.tabs.sendMessage(tabs[0].id, { action: "getProgress" }, (response) => {
+        console.log(response);
+
         if (response) {
           const progress = Math.round((response.nb_messages * 100) / response.total);
           if (response.nb_messages >= response.total)
@@ -67,6 +72,7 @@ class PopupDownloading extends React.Component {
   }
 
   downloadFile() {
+    this.setState({ loading: true })
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       chrome.tabs.sendMessage(tabs[0].id, { action: "downloadFile" }, (response) => {
         this.sendStopFetching();
@@ -77,13 +83,15 @@ class PopupDownloading extends React.Component {
   sendStopFetching() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       chrome.tabs.sendMessage(tabs[0].id, { action: "stopFetching" }, (response) => {
+        this.setState({ done: true, loading: false })
       });
     });
   }
 
   fetchMoreMessages() {
+    this.setState({ loading: false, done: false });
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      chrome.tabs.sendMessage(tabs[0].id, { action: "addMessages", count: 100 }, (response) => {
+      chrome.tabs.sendMessage(tabs[0].id, { action: "addMessages", count: 500 }, (response) => {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
           chrome.tabs.sendMessage(tabs[0].id, { action: "download" }, (response) => {
             this.interval = setInterval(() => this.refresh(), 1000);
@@ -99,10 +107,11 @@ class PopupDownloading extends React.Component {
         <div className="App">
           <header className="App-header">
             <Logo />
-            <p style={{ width: WIDTH, textAlign: "start", fontSize: 12 }} >Do not close the extension until the download has finished.</p>
+            <p style={{ width: WIDTH, textAlign: "start", fontSize: 12 }} >If you close the extension while downloading, just reopen it.</p>
             <ProgressBar animated style={{ width: WIDTH, marginBottom: 6 }} now={this.state.progress} label={`${Math.min(100, this.state.progress)}%`} />
-            <p style={{ width: WIDTH, textAlign: "start", fontSize: 12 }}>Estimated time: <span style={{ color: BLUE, fontWeight: "600" }}>{this.getEstimatedTime(this.state.nbMsgLeft / 100)}</span></p>
-            <p style={{ width: WIDTH, textAlign: "start", fontSize: 12 }} >Between <span style={{ color: BLUE, fontWeight: "600" }}>today </span> and <span style={{ color: BLUE, fontWeight: "600" }}>{this.state.lastDate} </span></p>
+            {
+              this.state.nbMsgLeft > 0 && <p style={{ width: WIDTH, textAlign: "start", fontSize: 12 }}>Estimated time: <span style={{ color: BLUE, fontWeight: "600" }}>{this.getEstimatedTime(this.state.nbMsgLeft / 415)}</span></p>
+            }            <p style={{ width: WIDTH, textAlign: "start", fontSize: 12 }} >Between <span style={{ color: BLUE, fontWeight: "600" }}>today </span> and <span style={{ color: BLUE, fontWeight: "600" }}>{this.state.lastDate} </span></p>
             {
               this.state.nbMsgLeft <= 0 ? <div>
                 <Button
@@ -112,18 +121,20 @@ class PopupDownloading extends React.Component {
                   size="small"
                   style={{ marginTop: 8, textTransform: 'lowercase' }}
                 >
-                  fetch 100 more
+                  add 500 more
                 </Button>
                 {'       '}
-                <Button
+                <LoadingButton
+                  loading={this.state.loading}
+                  done={this.state.done}
                   onClick={() => this.downloadFile()}
                   variant="contained"
                   color="primary"
                   size="small"
-                  style={{ marginTop: 8, textTransform: 'lowercase' }}
+                  style={{ width: 120, marginTop: 8, textTransform: 'lowercase' }}
                 >
                   {this.state.nbFiles > 1 ? `download ${this.state.nbFiles} files` : 'download file'}
-                </Button>
+                </LoadingButton>
               </div> : <div style={{ height: 40 }}></div>
             }
           </header>
