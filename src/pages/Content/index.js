@@ -244,7 +244,7 @@ function getText() {
 
 function getHTML() {
     deleteElemsWithClass(conf["ENTER_TO_REMOVE"]);
-    //deleteElemsWithClass("spvqvc9t ikw5e13s ebnioo9u lq84ybu9 hf30pyar s8sjc6am rfd0zzc9")
+    deleteElemsWithClass(conf["YOU_HAVE_SENT"]);
     var container = getMessagesInGrid();
     const content = container ? container.innerHTML : "";
     const template = conf["template"];

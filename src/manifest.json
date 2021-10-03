@@ -1,9 +1,9 @@
 {
-  "manifest_version": 3,
-  "version": "1.0.2",
-  "name": "messenger downloader",
-  "options_page": "options.html",
   "description": "Download your messenger conversations in 1 click",
+  "version": "1.0.5",
+  "manifest_version": 3,
+  "name": "messenger downloader: download fb messages",
+  "options_page": "options.html",
   "author": "Colin Cazabet",
   "action": {
     "default_popup": "popup.html",
