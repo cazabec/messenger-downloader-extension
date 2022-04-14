@@ -1,7 +1,5 @@
 # Messenger downloader chrome extension
 
-Extension website: [messengerdownloader.com](http://www.messengerdownloader.com/)
-
 Current version on chrome web store: [messenger downloader](https://chrome.google.com/webstore/detail/messenger-downloader/penjomejoaibkdmnfmcdkdmnhbcpojej)
 
 
